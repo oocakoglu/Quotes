@@ -1,0 +1,39 @@
+﻿@model QuotesDemo.Core.Models.Author
+@{
+
+}
+
+<div class="container-fluid p-1">
+    <div class="card">
+        <div class="card-header text-white bg-dark pt-3">
+            <h4>
+                <i class="fas fa-edit"></i>
+                Update Author
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="post" onsubmit="saveButton.disabled = true; return true;">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" name="Id" id="Id" />
+                <div class="panel panel-primary">
+                    <div class="panel-content">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label"></label>
+                                    <input asp-for="Name" class="form-control" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer mt-2">
+                        <a class="btn btn-danger" asp-action="Index"><span class="icon_close_alt"></span> Cancel</a>
+                        <button class="btn btn-success" type="submit" name="saveButton"> <span class="icon_check_alt"></span> Save</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

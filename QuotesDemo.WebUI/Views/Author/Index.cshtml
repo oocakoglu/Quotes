@@ -1,0 +1,78 @@
+﻿@model IEnumerable<QuotesDemo.Core.Models.Author>
+@{
+
+}
+
+<div class="container-fluid p-1">
+    <div class="card">
+        <div class="card-header text-white bg-dark pt-3">
+            <h4>
+                <i class="fas fa-table"></i>
+                Author List
+            </h4>
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th width="330">Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th colspan="3">
+                            <a class="btn btn-success mx-1" asp-action="Add"><i class="fa fa-plus"></i> Add</a>
+                        </th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr id="@item.Id">
+                            <td>@item.Id</td>
+                            <td>
+                                @Html.ActionLink(@item.Name, "Index", "Quote",new { AuthorId = @item.Id }, htmlAttributes:null )
+
+                            </td>
+                            <td>
+                                <div  id="dv@(item.Id)" class="btn-group float-end">
+                                    <a class="btn btn-success mx-1" asp-controller="Quote" asp-action="Index" asp-route-AuthorId="@item.Id" at><i class="fa fa-rectangle-list"></i> Quotes</a>
+                                    <a class="btn btn-warning mx-1" asp-action="Update" asp-route-id="@item.Id"><i class="fa fa-pen-to-square"></i> Update</a>
+                                    <a class="btn btn-danger mx-1" href="#" onclick=DeleteAuthor(@item.Id);><i class="fa fa-trash"></i> Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.3.js"
+        integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+        crossorigin="anonymous"></script>
+
+    <script>
+        function DeleteAuthor(value) {
+            $.ajax({
+                url: "/author/delete/" + value,
+                type: 'GET',
+                dataType: 'json', // added data type
+                success: function (res) {
+                    if (res == true) {
+                         $('#dv' + value).closest("tr").remove();   
+                        //$('table#AuthorTable tr#12').remove()
+                        //$(this).closest("tr").remove();
+                    }
+                }
+            });
+        }
+    </script>
+
+}
+

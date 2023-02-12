@@ -1,0 +1,137 @@
+﻿@model QuotesDemo.WebUI.Models.QuoteVM
+@{
+
+}
+<div class="container-fluid p-1">
+    <div class="card">
+        <div class="card-header text-white bg-dark pt-3">
+            <h4>
+                <i class="fas fa-table"></i>
+                Quote List
+            </h4>
+        </div>
+
+        <div class="card-header">
+            @using (Html.BeginForm("Index", "Quote", FormMethod.Get))
+            {
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group form-inline">
+                            <label for="AuthorId" class="control-label text-right">Author:</label>
+                            <select name="AuthorId" id="AuthorId" class="form-control">
+                                <option value="null">All</option>
+                                @foreach (var item in Model.Authors)
+                                {
+                                    @:<option value="@item.Id" @(item.Id == Model.SelectedAuthor ? "selected" : "")>@item.Name</option>
+
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 pt-3">
+                        <input class="btn btn-success mx-1" type="submit" value="Filter" />
+                        <a class="btn btn-success mx-1"  onclick="getRandomQuote()">GetRandomQuote</a>
+                    </div>
+                </div>
+             }
+        </div>
+
+        <div class="card-body">
+            <table id="datatablesSimple" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Author</th>
+                        <th>Quote</th>
+                        <th style="width:350px">Actions</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th colspan="4">
+                            <a class="btn btn-success mx-1" asp-action="Add"><i class="fa fa-plus"></i> Add</a>
+                        </th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    @foreach (var item in Model.Quotes)
+                    {
+                        <tr id="tr@(item.Id)"> 
+                            <td>@item.Id</td>
+                            <td>@item.Author.Name</td>
+                            <td>@Html.Raw(item.Text)</td>
+                            <td>
+                                <div  id="dv@(item.Id)" class="btn-group float-end">
+                                    <a class="btn btn-warning mx-1" asp-action="Update" asp-route-id="@item.Id"><i class="fa fa-pen-to-square"></i> Update</a>
+                                    <a class="btn btn-danger mx-1" href="#" onclick=deleteQuote(@item.Id);><i class="fa fa-trash"></i> Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="quoteModal" tabindex="-1" role="dialog" aria-labelledby="quoteModalAuthor" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="quoteModalAuthor">Modal title</h4>         
+            </div>
+            <div class="modal-body" id="quoteModalBody">...</div>
+            <div class="modal-footer">           
+                <button type="button" onclick="closeModal()" class="btn btn-primary">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.3.js"
+        integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+        crossorigin="anonymous"></script>
+
+    <script>
+        function deleteQuote(value) {
+            $.ajax({
+                url: "/quote/delete/" + value,
+                type: 'GET',
+                dataType: 'json', // added data type
+                success: function (res) {
+                    if (res == true) {           
+                        $('#dv' + value).closest("tr").remove();                 
+                    }
+                }
+            });
+        }
+
+
+        function getRandomQuote() {            
+            $.ajax({
+                url: "/quote/GetRandomQuote/" ,
+                type: 'GET',
+                dataType: 'json', // added data type
+                success: function (res) {
+                    //if (res == true) {
+                        $("#quoteModalBody").html(res.text);
+                        $("#quoteModalAuthor").html(res.author);                        
+                        $('#quoteModal').modal('show');
+                        //$('table#AuthorTable tr#12').remove()
+                        //$(this).closest("tr").remove();
+                        //
+                   // }
+                }
+            });
+        }
+
+        function closeModal() {            
+            $('#quoteModal').modal('hide');
+        }
+
+        
+    </script>
+
+}
